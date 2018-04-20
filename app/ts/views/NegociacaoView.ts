@@ -1,18 +1,18 @@
-namespace Views {
-    export class NegociacaoView extends View<Negociacoes> {
+import { View } from './View';
+import { Negociacoes } from "../models/Negociacoes";
+
+export class NegociacaoView extends View<Negociacoes> {
 
 
 
 
 
 
-        update(model: Negociacoes) {
-            this._elemento.innerHTML = this.template(model);
-        }
+    
 
-        template(model: Negociacoes): string {
+    template(model: Negociacoes): string {
 
-            return ` 
+        return ` 
         <table class="table table-hover table-bordered">
         <thead>
             <tr>
@@ -25,13 +25,13 @@ namespace Views {
 
         <tbody>
          ${model.paraArray().map(negociacao =>
-                    `
+                `
                 <td>${negociacao.data.getDate()}/${negociacao.data.getMonth() + 1}/${negociacao.data.getFullYear()}</td>
                 <td>${negociacao.quantidade}</td>
                 <td>${negociacao.valor}</td>
                 <td>${negociacao.volume}</td>
             `
-                ).join(' ')}
+            ).join(' ')}
         </tbody>
 
         <tfoot>
@@ -39,6 +39,5 @@ namespace Views {
     </table>     
         `
 
-        }
     }
 }
