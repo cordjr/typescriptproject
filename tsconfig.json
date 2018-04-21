@@ -5,6 +5,7 @@
         "noEmitOnError": true,
         "noImplicitAny": true,
         "removeComments": true,
+        "strictNullChecks": true,
         "module": "system"
     },
     "include": [
