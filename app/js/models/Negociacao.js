@@ -11,8 +11,21 @@ System.register([], function (exports_1, context_1) {
                     this.quantidade = quantidade;
                     this.valor = valor;
                 }
+                ehIgual(param) {
+                    return (this.data.getDate() == param.data.getDate()
+                        && this.data.getMonth() == param.data.getMonth()
+                        && this.data.getFullYear() == param.data.getFullYear()
+                        && this.quantidade == param.quantidade
+                        && this.valor == this.valor);
+                }
                 get volume() {
                     return this.quantidade * this.valor;
+                }
+                paraTexto() {
+                    console.log(`Data: ${this.data}
+            Quantidade: ${this.quantidade}, 
+            Valor: ${this.valor}, 
+            Volume: ${this.volume}`);
                 }
             };
             exports_1("Negociacao", Negociacao);

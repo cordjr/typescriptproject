@@ -3,8 +3,10 @@ import { Negociacoes } from "../models/Negociacoes";
 import { NegociacaoView } from "../views/NegociacaoView";
 import { MensagemView } from "../views/MensagemView";
 import { Negociacao } from "../models/Negociacao";
-import { domInject } from "../helpers/decorators/index"
+import { domInject, throttle } from "../helpers/decorators/index"
 import { NegociacaoParcial } from "../models/NegociacaoParcial";
+import {NegociacaoService } from "../services/index";
+import { HandlerFunction } from "../services/NegociacaoService";
 enum DiaDaSemana {
     Domingo,
     Segunda,
@@ -14,6 +16,8 @@ enum DiaDaSemana {
     Sexta,
     Sabado
 }
+
+let timer = 0;
 export class NegociacaoController {
     @domInject('#data')
     private _inputData: JQuery;
@@ -24,6 +28,7 @@ export class NegociacaoController {
     private _negociacoes = new Negociacoes();
     private _negociacaoView = new NegociacaoView('#negociacoesView');
     private _mensagemView = new MensagemView('#mensagemView');
+    private _negociacaoService = new NegociacaoService();
 
     constructor() {
         this._negociacaoView.update(this._negociacoes);
@@ -34,24 +39,24 @@ export class NegociacaoController {
         return !(data.getDay() == DiaDaSemana.Sabado || data.getDay() == DiaDaSemana.Domingo)
 
     }
-
+    @throttle(500)
     importa() {
-        function isOk(res: Response) {
+        const isOk: HandlerFunction = (res: Response)=> {
             if (!res.ok) {
                 throw new Error(res.statusText);
             }
             return res;
         }
-        fetch('http://localhost:8080/dados')
-            .then(res => isOk(res))
-            .then(res => res.json())
-            .then((dados: NegociacaoParcial[]) => {
-                dados.map(dado => new Negociacao(new Date(), dado.vezes, dado.montante)
-                )
-                .forEach(n => this._negociacoes.adiciona(n))
-                this._negociacaoView.update(this._negociacoes);
-            })
-            .catch(err => console.log(err));
+        this._negociacaoService.obterNegociacoes(isOk).then(negociacoes=>{
+            negociacoes.forEach(n=>this._negociacoes.adiciona(n))
+            this._negociacaoView.update(this._negociacoes);
+        })
+
+
+
+
+
+
     }
 
     adiciona(event: Event): void {
